@@ -1,0 +1,19 @@
+{
+  "name": "algo-agent-framework",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "format": "pnpm -r format"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
