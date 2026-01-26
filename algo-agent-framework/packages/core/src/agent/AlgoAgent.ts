@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { AlgoAgentConfig, AgentExecutionResult, AgentState, AlgoAgentError } from '../types';
+import { AlgoAgentConfig, AgentExecutionResult, AgentState, AlgoAgentError, ToolResult, ExecutionOptions } from '../types';
 import { Logger } from '../observability/Logger';
 
 export class AlgoAgent {
@@ -11,11 +11,48 @@ export class AlgoAgent {
     this.config = config;
     this.logger = new Logger(config.name);
     if (!config.name || !config.model || !config.tools?.length || !config.systemPrompt) {
-      throw new AlgoAgentError('Invalid config', 'INVALID_CONFIG');
+      throw new AlgoAgentError('INVALID_CONFIG', 'INVALID_CONFIG');
     }
   }
 
-  async run(options: { task: string; maxIterations?: number; timeout?: number }): Promise<AgentExecutionResult> {
+  private async callTool(
+    toolName: string,
+    input: Record<string, any>
+  ): Promise<ToolResult> {
+    const tool = this.config.tools.find(t => t.name === toolName);
+    if (!tool) throw new AlgoAgentError(`Tool ${toolName} not found`, 'TOOL_NOT_FOUND');
+
+    // Run before middleware
+    for (const middleware of this.config.middleware || []) {
+      if (middleware.beforeToolCall) {
+        await middleware.beforeToolCall(toolName, input);
+      }
+    }
+
+    const startTime = Date.now();
+    const result = await tool.execute(input);
+    result.executionTime = Date.now() - startTime;
+
+    // Run after middleware
+    for (const middleware of this.config.middleware || []) {
+      if (middleware.afterToolCall) {
+        await middleware.afterToolCall(result);
+      }
+    }
+
+    // Record tool call
+    this.state!.toolCalls.push({
+      toolName,
+      input,
+      output: result,
+      duration: result.executionTime!,
+      timestamp: Date.now()
+    });
+
+    return result;
+  }
+
+  async run(options: ExecutionOptions): Promise<AgentExecutionResult> {
     const startTime = Date.now();
     const executionId = uuid();
 
@@ -31,8 +68,16 @@ export class AlgoAgent {
       updatedAt: Date.now()
     };
 
-    // TODO: Implement LangChain agent loop
-    const answer = 'Agent loop not yet implemented - see docs/agents.md';
+    let answer: string;
+
+    if (options.directToolCall) {
+      // Direct tool call for testing
+      const result = await this.callTool(options.directToolCall.toolName, options.directToolCall.input);
+      answer = JSON.stringify({ toolResult: result }, null, 2);
+    } else {
+      // TODO: LangChain integration
+      answer = 'LangChain integration pending';
+    }
 
     if (this.config.stateStore) {
       this.state.status = 'completed';

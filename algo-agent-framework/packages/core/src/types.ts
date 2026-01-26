@@ -8,6 +8,14 @@ export interface AlgoAgentConfig {
   stateStore?: StateStore;
 }
 
+export interface ExecutionOptions {
+  task: string;
+  maxIterations?: number;
+  timeout?: number;
+  dryRun?: boolean;
+  directToolCall?: { toolName: string; input: Record<string, any> }; // TEMP for testing
+}
+
 export interface BaseTool {
   name: string;
   description: string;
@@ -24,7 +32,7 @@ export interface ToolResult {
 }
 
 export interface Middleware {
-  beforeToolCall?(toolName: string, input: any): Promise<void>;
+  beforeToolCall?(toolName: string, input: Record<string, any>): Promise<void>;
   afterToolCall?(result: ToolResult): Promise<void>;
 }
 
