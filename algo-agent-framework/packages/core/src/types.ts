@@ -1,6 +1,6 @@
 export interface AlgoAgentConfig {
   name: string;
-  model: string;
+  model?: string; // Optional, can be inferred from env
   tools: BaseTool[];
   systemPrompt: string;
   middleware?: Middleware[];

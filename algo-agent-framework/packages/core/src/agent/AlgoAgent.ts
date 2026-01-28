@@ -1,18 +1,27 @@
 import { v4 as uuid } from 'uuid';
 import { AlgoAgentConfig, AgentExecutionResult, AgentState, AlgoAgentError, ToolResult, ExecutionOptions } from '../types';
 import { Logger } from '../observability/Logger';
+import { ModelFactory } from './ModelFactory';
+import { BaseChatModel } from '@langchain/core/language_models/chat_models';
 
 export class AlgoAgent {
   private config: AlgoAgentConfig;
   private logger: Logger;
   private state: AgentState | null = null;
+  private model: BaseChatModel;
 
   constructor(config: AlgoAgentConfig) {
     this.config = config;
     this.logger = new Logger(config.name);
-    if (!config.name || !config.model || !config.tools?.length || !config.systemPrompt) {
+
+    // Resolve model name
+    const modelName = config.model || process.env.AGENT_MODEL;
+    if (!config.name || !modelName || !config.tools?.length || !config.systemPrompt) {
       throw new AlgoAgentError('INVALID_CONFIG', 'INVALID_CONFIG');
     }
+
+    // Validate that we can create the model
+    this.model = ModelFactory.create(modelName);
   }
 
   private async callTool(
