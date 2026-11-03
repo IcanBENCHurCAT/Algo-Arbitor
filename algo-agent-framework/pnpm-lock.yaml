@@ -29,8 +29,8 @@ importers:
   packages/core:
     dependencies:
       '@algorandfoundation/algokit-utils':
-        specifier: ^2.0.0
-        version: 2.3.2
+        specifier: ^9.2.2
+        version: 9.2.2(algosdk@2.11.0)
       '@langchain/core':
         specifier: ^0.3.80
         version: 0.3.80(openai@4.104.0(zod@4.6.7))
@@ -95,9 +95,11 @@ importers:
 
 packages:
 
-  '@algorandfoundation/algokit-utils@2.3.2':
-    resolution: {integrity: sha512-+Q4b8OVXogjkthapH04k+AqY19hxklfXFTmvoaQdQbbo2rUk1AgSXBRq0ThVg7n7RhfSMMUh0ZIL5bpse7MSKA==}
-    engines: {node: '>=16.0'}
+  '@algorandfoundation/algokit-utils@9.2.2':
+    resolution: {integrity: sha512-3UWFF/vNJNEAGK4w+ZRSOGs1tbsDYtom3L3mpUBqb0J6mWif/c1Z36emCC2gV1s+XKOKDtgodqqI7cLWf7FGAQ==}
+    engines: {node: '>=22.0'}
+    peerDependencies:
+      algosdk: ^3.5.2
 
   '@babel/code-frame@7.29.7':
     resolution: {integrity: sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw==}
@@ -2041,7 +2043,7 @@ packages:
 
 snapshots:
 
-  '@algorandfoundation/algokit-utils@2.3.2':
+  '@algorandfoundation/algokit-utils@9.2.2(algosdk@2.11.0)':
     dependencies:
       algosdk: 2.11.0
       buffer: 6.0.3

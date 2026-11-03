@@ -10,7 +10,7 @@
     "format": "prettier --write src"
   },
   "dependencies": {
-    "@algorandfoundation/algokit-utils": "^2.0.0",
+    "@algorandfoundation/algokit-utils": "^9.2.2",
     "@langchain/openai": "^0.2.0",
     "@langchain/core": "^0.3.80",
     "@langchain/langgraph": "^0.1.0",
