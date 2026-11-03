@@ -1,0 +1,7 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/algo-agent-framework"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
