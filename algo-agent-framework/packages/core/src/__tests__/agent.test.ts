@@ -1,6 +1,7 @@
 import { AlgoAgent } from '../agent/AlgoAgent';
 import { WalletTool } from '../tools/WalletTool';
 import { MarketTool } from '../tools/MarketTool';
+import algosdk from 'algosdk';
 
 describe('AlgoAgent', () => {
   it('should create agent with valid config', () => {
@@ -63,8 +64,19 @@ describe('AlgoAgent', () => {
     });
 
     const result = await agent.run({ task: 'test' });
-    // @ts-ignore
+    // @ts-expect-error accessing private config for test verification
     const loaded = await agent['config'].stateStore.load(result.executionId!);
     expect(loaded).toBeDefined();
+  });
+
+  it('returns string address from WalletTool under algosdk v3', async () => {
+    const acct = algosdk.generateAccount();
+    const mnemonic = algosdk.secretKeyToMnemonic(acct.sk);
+    const tool = new WalletTool({ mnemonic });
+    const res = await tool.execute({ action: 'address' });
+
+    expect(res.status).toBe('success');
+    expect(typeof res.data.address).toBe('string');
+    expect(res.data.address).toBe(acct.addr.toString());
   });
 });
