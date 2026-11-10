@@ -31,7 +31,7 @@ export class WalletTool extends BaseTool {
         return { status: 'success', data: { algo: 10000, assets: [] } }; // Stub
       case 'address':
         if (!this.account) throw new Error('No mnemonic');
-        return { status: 'success', data: { address: this.account.addr } };
+        return { status: 'success', data: { address: this.account.addr.toString() } };
       case 'sign_transaction':
         // Stub - real signing later
         return { status: 'success', data: { txid: 'stubbed', signed: input.transaction } };
