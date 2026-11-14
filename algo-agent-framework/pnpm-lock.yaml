@@ -34,8 +34,8 @@ importers:
         specifier: ^1.3.7
         version: 1.3.7(openai@7.53.0(zod@4.6.7))
       '@langchain/openai':
-        specifier: ^1.8.0
-        version: 1.8.2(@langchain/core@1.3.7(openai@7.53.0(zod@4.6.7)))
+        specifier: ^1.8.3
+        version: 1.8.3(@langchain/core@1.3.7(openai@7.53.0(zod@4.6.7)))
       algosdk:
         specifier: ^3.9.0
         version: 3.9.0
@@ -459,11 +459,11 @@ packages:
     resolution: {integrity: sha512-bkZ11aypuAxKq+aMLDxdD+owHlb5NPxr20XBCwr7h1fulUsl4V/e5N1aqIt2oMgDdt7NtPiKpme2LYdBiEwSLg==}
     engines: {node: '>=20'}
 
-  '@langchain/openai@1.8.2':
-    resolution: {integrity: sha512-pA0ns3ikApRpCbvrShDqmIkPisbbZ3Ygr1HSsmJdrl+gqkVBeLKxS+P0c+DIpzXKoGVg0nuvQCb/ZXLM5Ti+iw==}
+  '@langchain/openai@1.8.3':
+    resolution: {integrity: sha512-boBsfQ0dR4iUd5GHQtPKL5cJrFFih19+y5OqZ2J4gThare4R/2o2ORacb98fjfIp7SruEc5SEzdJ1OGdf1oi4Q==}
     engines: {node: '>=22'}
     peerDependencies:
-      '@langchain/core': ^1.3.5
+      '@langchain/core': ^1.3.7
 
   '@parcel/watcher-android-arm64@2.6.0':
     resolution: {integrity: sha512-trgpLSCKRC/huFjXX/Smh+0sWe4+YtKfktIToiMl59ghz7z+qkH6kMvNnUbLyRs9N11t8l4svSCs1+5B3rOAhA==}
@@ -2584,7 +2584,7 @@ snapshots:
       - openai
       - ws
 
-  '@langchain/openai@1.8.2(@langchain/core@1.3.7(openai@7.53.0(zod@4.6.7)))':
+  '@langchain/openai@1.8.3(@langchain/core@1.3.7(openai@7.53.0(zod@4.6.7)))':
     dependencies:
       '@langchain/core': 1.3.7(openai@7.53.0(zod@4.6.7))
       js-tiktoken: 1.0.21
