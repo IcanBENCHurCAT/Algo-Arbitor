@@ -52,6 +52,52 @@ export class AlgoAgent {
     return result;
   }
 
+  private async execute(
+    options: ExecutionOptions,
+    startTime: number
+  ): Promise<AgentExecutionResult> {
+    if (!this.state) {
+      throw new AlgoAgentError('No active state', 'NO_ACTIVE_STATE');
+    }
+
+    let answer: string;
+
+    if (options.directToolCall) {
+      // Direct tool call for testing
+      const result = await this.callTool(
+        options.directToolCall.toolName,
+        options.directToolCall.input
+      );
+      answer = JSON.stringify({ toolResult: result }, null, 2);
+    } else {
+      // TODO: LangChain integration
+      answer = 'LangChain integration pending';
+    }
+
+    this.state.updatedAt = Date.now();
+    this.state.status = 'completed';
+
+    if (this.config.stateStore) {
+      await this.config.stateStore.save(this.state);
+    }
+
+    const totalCost = this.state.toolCalls.reduce(
+      (sum, tc) => sum + (tc.output?.cost ?? 0),
+      0
+    );
+
+    return {
+      executionId: this.state.id,
+      status: 'success',
+      answer,
+      toolCalls: this.state.toolCalls,
+      transactions: [],
+      totalCost,
+      duration: Date.now() - startTime,
+      timestamp: Date.now()
+    };
+  }
+
   async run(options: ExecutionOptions): Promise<AgentExecutionResult> {
     const startTime = Date.now();
     const executionId = uuid();
@@ -68,40 +114,33 @@ export class AlgoAgent {
       updatedAt: Date.now()
     };
 
-    let answer: string;
-
-    if (options.directToolCall) {
-      // Direct tool call for testing
-      const result = await this.callTool(options.directToolCall.toolName, options.directToolCall.input);
-      answer = JSON.stringify({ toolResult: result }, null, 2);
-    } else {
-      // TODO: LangChain integration
-      answer = 'LangChain integration pending';
-    }
-
-    if (this.config.stateStore) {
-      this.state.status = 'completed';
-      await this.config.stateStore.save(this.state);
-    }
-
-    return {
-      executionId,
-      status: 'success',
-      answer,
-      toolCalls: this.state.toolCalls,
-      transactions: [],
-      totalCost: 0,
-      duration: Date.now() - startTime,
-      timestamp: Date.now()
-    };
+    return this.execute(options, startTime);
   }
 
-  async resume(executionId: string, options: { task: string }): Promise<AgentExecutionResult> {
-    if (!this.config.stateStore) throw new AlgoAgentError('No state store', 'NO_STATE_STORE');
+  async resume(
+    executionId: string,
+    options: ExecutionOptions
+  ): Promise<AgentExecutionResult> {
+    if (!this.config.stateStore) {
+      throw new AlgoAgentError('No state store', 'NO_STATE_STORE');
+    }
     const state = await this.config.stateStore.load(executionId);
-    if (!state) throw new AlgoAgentError('State not found', 'NOT_FOUND');
-    this.state = state;
-    return this.run(options);
+    if (!state) {
+      throw new AlgoAgentError('State not found', 'NOT_FOUND');
+    }
+
+    const startTime = Date.now();
+    this.logger.info('Agent resuming', { executionId, task: options.task });
+
+    this.state = {
+      ...state,
+      messages: [...state.messages, { role: 'user', content: options.task }],
+      toolCalls: [...state.toolCalls],
+      status: 'running',
+      updatedAt: Date.now()
+    };
+
+    return this.execute(options, startTime);
   }
 
   async getMetrics() {
