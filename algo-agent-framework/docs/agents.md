@@ -39,7 +39,7 @@ const agent = new AlgoAgent({
   middleware: [
     new RateLimiter({ calls: 100, window: 60 }),
     new CostController({ maxSpendPerDay: 5.0 }),
-    new HumanApproval({ highValueThreshold: 100 })
+    new HumanApproval({ highValueThreshold: 100 }) // >= 100 requires onApprovalRequired or throws APPROVAL_REQUIRED
   ]
 });
 ```
